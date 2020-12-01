@@ -186,8 +186,10 @@ def _create_csv_from_dict_taylor_diag(lat_lon_table_info, output_dir, season, te
 
         for key, metrics_dic in list(lat_lon_table_info[season].items()):
             # Only include variables from a certain list in the Taylor diagram.
-            var_list_1 = ['PRECT', 'PSL', 'SWCF', 'LWCF', 'TREFHT']
-            var_list_2 = ['PRECT_GPCP', 'PSL_ERA-Interim', 'SWCF_ceres', 'LWCF_ceres', 'TREFHT_CRU']
+            #var_list_1 = ['PRECT', 'PSL', 'SWCF', 'LWCF', 'TREFHT']
+            #var_list_2 = ['PRECT_GPCP', 'PSL_ERA-Interim', 'SWCF_ceres', 'LWCF_ceres', 'TREFHT_CRU']
+            var_list_1 = ['PRECT', 'SWCF', 'LWCF', 'SWCFSRF', 'LWCFSRF','TREFHT','EvapFrac','FSNS','TMQ']
+            var_list_2 = ['PRECT_GPCP', 'SWCF_ceres', 'LWCFSRF_ceres','SWCFSRF_ceres', 'LWCF_ceres', 'TREFHT_ERA5','EvapFrac_ERA5','FSNS_ERA5','TMQ_ERA5']
             if run_type == 'model_vs_obs':
                 if key.split()[0] in var_list_1 and '_'.join((key.split()[0], key.split()[2].split('_')[0])) in var_list_2:
                     metrics = metrics_dic['metrics']

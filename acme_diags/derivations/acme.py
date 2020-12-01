@@ -122,6 +122,20 @@ def prect(precc, precl):
     var.long_name = "Total precipitation rate (convective + large-scale)"
     return var
 
+def evapfrac(lh, sh):
+    """Evaporative fraction"""
+    var = abs(lh) / (abs(lh) + abs(sh))
+    var.units = "dimensionless" 
+    var.long_name = "Evaporative fraction"
+    return var
+
+def tuvq(tuq, tvq):
+    """Total vertically integrated moisture flux"""
+    var = tuq + tvq
+    var.units = "kg/m/s" 
+    var.long_name = "Total (vertically integrated) moisture flux"
+    return var
+
 def precst(precc, precl):
     """Total precipitation flux = convective + large-scale"""
     var = precc + precl
@@ -637,6 +651,10 @@ derived_variables = {
     'SHFLX': OrderedDict([
         (('hfss',), rename)
     ]),
+    'EvapFrac': OrderedDict([
+        (('hfls','hfss'), lambda lh,sh: evapfrac(lh,sh)),
+        (('LHFLX','SHFLX'),lambda lh,sh: evapfrac(lh,sh))
+    ]),
     'TGCLDLWP_OCN': OrderedDict([
         (('TGCLDLWP_OCEAN',), lambda x: convert_units(x, target_units='g/m^2')),
         (('TGCLDLWP', 'OCNFRAC'), lambda tgcldlwp, ocnfrac: mask_by(
@@ -993,5 +1011,14 @@ derived_variables = {
     ]),
     'siv': OrderedDict([
         (('siv',), rename)
+    ]),
+    'TUQ': OrderedDict([
+        (('TUQ',), rename)
+    ]),
+    'TVQ': OrderedDict([
+        (('TVQ',), rename)
+    ]),
+    'TUVQ': OrderedDict([
+        (('TUQ','TVQ'), lambda tuq, tvq: tuvq(tuq, tvq))
     ])
 }

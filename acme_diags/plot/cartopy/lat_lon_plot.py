@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+from cartopy.io.shapereader import Reader
 from acme_diags.derivations.default_regions import regions_specs
 import cdutil
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
@@ -126,10 +127,29 @@ def plot_panel(n, fig, proj, var, clevels, cmap,
     # Full world would be aspect 360/(2*180) = 1
     ax.set_aspect((lon_east - lon_west)/(2*(lat_north - lat_south)))
     ax.coastlines(lw=0.3)
+
+    shape_features = dict()
+    for huc2 in range(18):
+        basin_id = f"{huc2+1:02}"
+        ps       = 'poly' + str(huc2 + 1)
+        fname    = '/export/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
+        shape_features[ps] = cfeature.ShapelyFeature(Reader(fname).geometries(),
+                                                 ccrs.PlateCarree(), edgecolor='blue')
+ 
+
+
     if not global_domain and 'RRM' in region_str:
-        ax.coastlines(resolution='50m', color='black', linewidth=1)
-        state_borders = cfeature.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lakes', scale='50m', facecolor='none')
-        ax.add_feature(state_borders, edgecolor='black')
+#        ax.coastlines(resolution='50m', color='black', linewidth=1)
+#        state_borders = cfeature.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lakes', scale='50m', facecolor='none')
+#        ax.add_feature(state_borders, edgecolor='black')
+
+        for huc2 in range(18):
+            ps = 'poly' + str(huc2 + 1)
+            ax.add_feature(shape_features[ps], facecolor='none', edgecolor='black', linewidth=2)
+            #ax.text(dss[ps]['lon'], dss[ps]['lat'], str(huc2+1), horizontalalignment='center', verticalalignment='center', transform=ccrs.PlateCarree(),
+            #         fontsize=14, color='k', fontweight='bold')# bbox=dict(facecolor='white', alpha=0.5, edgecolor='none'))
+
+
     if title[0] is not None:
         ax.set_title(title[0], loc='left', fontdict=plotSideTitle)
     if title[1] is not None:
