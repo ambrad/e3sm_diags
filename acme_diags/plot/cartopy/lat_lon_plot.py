@@ -132,7 +132,8 @@ def plot_panel(n, fig, proj, var, clevels, cmap,
     for huc2 in range(18):
         basin_id = f"{huc2+1:02}"
         ps       = 'poly' + str(huc2 + 1)
-        fname    = '/export/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
+        #fname    = '/export/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
+        fname    = '/global/cfs/cdirs/e3sm/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
         shape_features[ps] = cfeature.ShapelyFeature(Reader(fname).geometries(),
                                                  ccrs.PlateCarree(), edgecolor='blue')
  

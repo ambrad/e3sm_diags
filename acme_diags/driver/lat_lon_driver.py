@@ -9,6 +9,7 @@ from acme_diags.plot import plot
 from acme_diags.derivations import acme
 from acme_diags.metrics import rmse, corr, min_cdms, max_cdms, mean, std
 from acme_diags.driver import utils
+import numpy
 
 
 def create_metrics(ref, test, ref_regrid, test_regrid, diff):
@@ -72,6 +73,9 @@ def run_diag(parameter):
                 land_frac = f('LANDFRAC')
                 ocean_frac = f('OCNFRAC')
 
+        #Get COUNUS domain:
+        with cdms2.open('/global/homes/c/chengzhu/acme_diags_parameters/acme_diags/CONUS_mask.nc') as f:
+            conus_mask = f('CONUS_mask',squeeze=1)
         for var in variables:
             print('Variable: {}'.format(var))
             parameter.var_id = var
@@ -123,8 +127,13 @@ def run_diag(parameter):
                     for region in regions:
                         #print("Selected region: {}".format(region))
 
-                        mv1_domain = utils.general.select_region(region, mv1, land_frac, ocean_frac, parameter)
-                        mv2_domain = utils.general.select_region(region, mv2, land_frac, ocean_frac, parameter)
+                        mv1_domain_0 = utils.general.select_region(region, mv1, land_frac, ocean_frac, parameter)
+                        mv2_domain_0 = utils.general.select_region(region, mv2, land_frac, ocean_frac, parameter)
+                        mv1_domain = utils.general.mask_by(mv1_domain_0, conus_mask, low_limit=0.5)
+                        mv2_domain = utils.general.mask_by(mv2_domain_0, conus_mask, low_limit=0.5)
+                        print(MV2.count(mv1_domain_0),MV2.count(mv2_domain_0),'**********')
+                        print(MV2.count(mv1_domain),MV2.count(mv2_domain),'**********')
+                        
 
                         parameter.output_file = '-'.join(
                             [ref_name, var, str(int(plev[ilev])), season, region])
@@ -163,9 +172,27 @@ def run_diag(parameter):
             elif mv1.getLevel() is None and mv2.getLevel() is None:
                 for region in regions:
                     #print("Selected region: {}".format(region))
+                    print(MV2.count(conus_mask),conus_mask.shape)
+                    conus_mask = conus_mask.regrid(
+            mv1.getGrid(), regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+                    conus_mask = MV2.masked_where(conus_mask==conus_mask.fill_value,conus_mask)
+                     #mv2_reg = MV2.masked_where(
+                     #           mv2_reg == mv2_reg.fill_value, mv2_reg)
+                    
+                    mv1 = MV2.masked_where(conus_mask, mv1)
+                    mv2 = MV2.masked_where(conus_mask, mv2)
+                    print(MV2.count(conus_mask),conus_mask.shape)
+                    print(conus_mask[:])
+
 
                     mv1_domain = utils.general.select_region(region, mv1, land_frac, ocean_frac, parameter)
                     mv2_domain = utils.general.select_region(region, mv2, land_frac, ocean_frac, parameter)
+                    #mv1_domain = MV2.masked_where(conus_mask.squeeze(), mv1_domain_0)
+                    #mv2_domain = MV2.masked_where(conus_mask.squeeze(), mv2_domain_0)
+                    #mv1_domain = utils.general.mask_by(mv1_domain_0, conus_mask, low_limit=-1000)
+                    #mv2_domain = utils.general.mask_by(mv2_domain_0, conus_mask, low_limit=-1000)
+                    print(MV2.count(mv1),MV2.count(mv2),'**********')
+                    print(MV2.count(mv1_domain),MV2.count(mv2_domain),'**********')
 
                     parameter.output_file = '-'.join(
                         [ref_name, var, season, region])
