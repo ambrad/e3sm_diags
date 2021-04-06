@@ -172,27 +172,35 @@ def run_diag(parameter):
             elif mv1.getLevel() is None and mv2.getLevel() is None:
                 for region in regions:
                     #print("Selected region: {}".format(region))
-                    print(MV2.count(conus_mask),conus_mask.shape)
-                    conus_mask = conus_mask.regrid(
-            mv1.getGrid(), regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
-                    conus_mask = MV2.masked_where(conus_mask==conus_mask.fill_value,conus_mask)
-                     #mv2_reg = MV2.masked_where(
-                     #           mv2_reg == mv2_reg.fill_value, mv2_reg)
-                    
-                    mv1 = MV2.masked_where(conus_mask, mv1)
-                    mv2 = MV2.masked_where(conus_mask, mv2)
-                    print(MV2.count(conus_mask),conus_mask.shape)
-                    print(conus_mask[:])
+                    #print(MV2.count(conus_mask),conus_mask.shape)
+                    #conus_mask = conus_mask.regrid(
+            #mv1.getGrid(), regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+                    #
+                    #mv1 = MV2.masked_where(conus_mask<1, mv1)
+                    #mv2 = MV2.masked_where(conus_mask<1, mv2)
+                    #print(MV2.count(conus_mask),conus_mask.shape)
+                    #print(conus_mask[:])
 
-
+#
                     mv1_domain = utils.general.select_region(region, mv1, land_frac, ocean_frac, parameter)
                     mv2_domain = utils.general.select_region(region, mv2, land_frac, ocean_frac, parameter)
-                    #mv1_domain = MV2.masked_where(conus_mask.squeeze(), mv1_domain_0)
-                    #mv2_domain = MV2.masked_where(conus_mask.squeeze(), mv2_domain_0)
-                    #mv1_domain = utils.general.mask_by(mv1_domain_0, conus_mask, low_limit=-1000)
-                    #mv2_domain = utils.general.mask_by(mv2_domain_0, conus_mask, low_limit=-1000)
-                    print(MV2.count(mv1),MV2.count(mv2),'**********')
-                    print(MV2.count(mv1_domain),MV2.count(mv2_domain),'**********')
+#                    mv1_domain = mv1_domain.regrid(conus_mask.getGrid(),regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+#                    mv2_domain = mv2_domain.regrid(conus_mask.getGrid(),regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+#                    mv1_domain = MV2.masked_where(conus_mask==0, mv1_domain)
+#                    mv2_domain = MV2.masked_where(conus_mask==0, mv2_domain)
+
+                    conus_mask1 = conus_mask.regrid(
+            mv1_domain.getGrid(), regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+                    mv1_domain = MV2.masked_where(conus_mask1==0, mv1_domain) 
+                    conus_mask2 = conus_mask.regrid(
+            mv1_domain.getGrid(), regridTool=parameter.regrid_tool, regridMethod=parameter.regrid_method)
+                    mv2_domain = MV2.masked_where(conus_mask2==0, mv2_domain) 
+#                    #mv1_domain = MV2.masked_where(conus_mask.squeeze(), mv1_domain_0)
+#                    #mv2_domain = MV2.masked_where(conus_mask.squeeze(), mv2_domain_0)
+#                    #mv1_domain = utils.general.mask_by(mv1_domain_0, conus_mask, low_limit=-1000)
+#                    #mv2_domain = utils.general.mask_by(mv2_domain_0, conus_mask, low_limit=-1000)
+#                    print(MV2.count(mv1),MV2.count(mv2),'**********')
+#                    print(MV2.count(mv1_domain),MV2.count(mv2_domain),'**********')
 
                     parameter.output_file = '-'.join(
                         [ref_name, var, season, region])

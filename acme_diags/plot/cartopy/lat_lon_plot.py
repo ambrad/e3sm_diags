@@ -115,6 +115,7 @@ def plot_panel(n, fig, proj, var, clevels, cmap,
     ax = fig.add_axes(panel[n], projection=proj)
     ax.set_extent([lon_west, lon_east, lat_south, lat_north], crs=proj)
     cmap = get_colormap(cmap, parameters)
+    plt.gca().patch.set_color('grey')
     p1 = ax.contourf(lon, lat, var,
                      transform=ccrs.PlateCarree(),
                      norm=norm,
@@ -126,29 +127,35 @@ def plot_panel(n, fig, proj, var, clevels, cmap,
     #ax.set_aspect('auto')
     # Full world would be aspect 360/(2*180) = 1
     ax.set_aspect((lon_east - lon_west)/(2*(lat_north - lat_south)))
-    ax.coastlines(lw=0.3)
+    #ax.coastlines(lw=0.3)
 
-    shape_features = dict()
-    for huc2 in range(18):
-        basin_id = f"{huc2+1:02}"
-        ps       = 'poly' + str(huc2 + 1)
-        #fname    = '/export/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
-        fname    = '/global/cfs/cdirs/e3sm/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
-        shape_features[ps] = cfeature.ShapelyFeature(Reader(fname).geometries(),
-                                                 ccrs.PlateCarree(), edgecolor='blue')
+    #shape_features = dict()
+    #for huc2 in range(18):
+    ##for huc2 in range(22):
+    #    basin_id = f"{huc2+1:02}"
+    #    ps       = 'poly' + str(huc2 + 1)
+    #    #fname    = '/export/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
+    #    fname    = '/global/cfs/cdirs/e3sm/zhang40/US_water_cycle_metrics/shape_files/WBDHU2_' + basin_id + '.shp'
+    #    shape_features[ps] = cfeature.ShapelyFeature(Reader(fname).geometries(),
+    #                                            ccrs.PlateCarree(), edgecolor='blue')
+    fname      = '/global/cfs/cdirs/e3sm/mapping/maps/huc2_maps/huc2_shapes/HUC2all.shp'
+    shapes     = Reader(fname)
+    all_shapes = cfeature.ShapelyFeature(Reader(fname).geometries(), ccrs.PlateCarree(), edgecolor='blue')
  
 
 
-    if not global_domain and 'RRM' in region_str:
+    #if not global_domain and 'RRM' in region_str:
+    if not global_domain and 'CONUS' in region_str:
 #        ax.coastlines(resolution='50m', color='black', linewidth=1)
 #        state_borders = cfeature.NaturalEarthFeature(category='cultural', name='admin_1_states_provinces_lakes', scale='50m', facecolor='none')
 #        ax.add_feature(state_borders, edgecolor='black')
 
-        for huc2 in range(18):
-            ps = 'poly' + str(huc2 + 1)
-            ax.add_feature(shape_features[ps], facecolor='none', edgecolor='black', linewidth=2)
-            #ax.text(dss[ps]['lon'], dss[ps]['lat'], str(huc2+1), horizontalalignment='center', verticalalignment='center', transform=ccrs.PlateCarree(),
-            #         fontsize=14, color='k', fontweight='bold')# bbox=dict(facecolor='white', alpha=0.5, edgecolor='none'))
+    #    for huc2 in range(18):
+    #        ps = 'poly' + str(huc2 + 1)
+    #        ax.add_feature(shape_features[ps], facecolor='none', edgecolor='black', linewidth=2)
+    #        #ax.text(dss[ps]['lon'], dss[ps]['lat'], str(huc2+1), horizontalalignment='center', verticalalignment='center', transform=ccrs.PlateCarree(),
+    #        #         fontsize=14, color='k', fontweight='bold')# bbox=dict(facecolor='white', alpha=0.5, edgecolor='none'))
+        ax.add_feature(all_shapes, facecolor='none', edgecolor='grey', linewidth=1)
 
 
     if title[0] is not None:

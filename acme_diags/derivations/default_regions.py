@@ -58,6 +58,7 @@ regions_specs = {
     # Below is for RRM(regionally refined model) domains.
     #'CONUS_RRM': {'domain': cdutil.region.domain(latitude=(20., 50., 'ccb'), longitude=(-125., -65., 'ccb'))},For RRM dataset, negative value won't work
     'CONUS_RRM': {'domain': cdutil.region.domain(latitude=(25., 50., 'ccb'), longitude=(235., 295., 'ccb'))},
+    'CONUS': {'domain': cdutil.region.domain(latitude=(25., 50., 'ccb'), longitude=(235., 293., 'ccb'))},
     # Below is for debugging. A smaller latitude range reduces processing time.
     'DEBUG': {'domain': cdutil.region.domain(latitude=(-2., 2, 'ccb'))}
 }
