@@ -42,6 +42,8 @@ dependencies:
   # Used when converting Jupyter notebooks to import to Sphinx
   - nbconvert=6.4.2
   - pandoc=2.17.1
+  # Used in the CDP viewer
+  - jinja2=3.0.3
   - pip:
       - sphinx-multiversion==0.2.4
 prefix: /opt/miniconda3/envs/e3sm_diags_dev
